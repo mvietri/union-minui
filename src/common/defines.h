@@ -104,6 +104,7 @@
 #define SETTINGS_SIZE 4
 #define SETTINGS_WIDTH 80
 
+#define CLOCK_SIZE 100
 #define MAIN_ROW_COUNT 6 // SCREEN_HEIGHT / (PILL_SIZE * SCREEN_SCALE) - 2 (floor and subtract 1 if not an integer)
 #define PADDING 10 // PILL_SIZE / 3 (or non-integer part of the previous calculatiom divided by three)
 

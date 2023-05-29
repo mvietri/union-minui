@@ -688,7 +688,7 @@ void GFX_blitRect(int asset, SDL_Surface* dst, SDL_Rect* dst_rect) {
 	SDL_FillRect(dst, &(SDL_Rect){x+r,y+h-r,w-d,r}, c);
 	GFX_blitAsset(asset, &(SDL_Rect){r,r,r,r}, dst, &(SDL_Rect){x+w-r,y+h-r});
 }
-void GFX_blitBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
+void GFX_blitClockAndBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
 	// LOG_info("dst: %p\n", dst);
 	
 	if (!dst_rect) dst_rect = &(SDL_Rect){0,0,0,0};
@@ -717,6 +717,19 @@ void GFX_blitBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
 		
 		GFX_blitAsset(percent<=20?ASSET_BATTERY_FILL_LOW:ASSET_BATTERY_FILL, &clip, dst, &(SDL_Rect){x+SCALE1(3)+clip.x,y+SCALE1(2)});
 	}
+
+	// Get the current time
+	time_t currentTime = time(NULL);
+	struct tm* timeinfo = localtime(&currentTime);
+	int hours = timeinfo->tm_hour;
+	int minutes = timeinfo->tm_min;
+
+	// Convert hours and minutes to strings
+	char timeStr[6];
+	snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hours, minutes);
+	SDL_Surface* text = TTF_RenderUTF8_Blended(font.large, timeStr, COLOR_WHITE);
+	SDL_BlitSurface(text, NULL, dst, &(SDL_Rect){dst_rect->x - text->w - 20, dst_rect->y + (SCALE1(PILL_SIZE) - text->h) / 2});
+	SDL_FreeSurface(text);
 }
 int GFX_getButtonWidth(char* hint, char* button) {
 	int button_width = 0;
@@ -883,7 +896,7 @@ int GFX_blitHardwareGroup(SDL_Surface* dst, int show_setting) {
 			ow,
 			SCALE1(PILL_SIZE)
 		});
-		GFX_blitBattery(dst, &(SDL_Rect){ox,oy});
+		GFX_blitClockAndBattery(dst, &(SDL_Rect){ox,oy});
 	}
 	
 	return ow;
@@ -1342,7 +1355,7 @@ static void POW_initOverlay(void) {
 	SDL_SetAlpha(gfx.assets, 0,0);
 	GFX_blitAsset(ASSET_BLACK_PILL, NULL, pow.overlay, NULL);
 	SDL_SetAlpha(gfx.assets, SDL_SRCALPHA,0);
-	GFX_blitBattery(pow.overlay, NULL);
+	GFX_blitClockAndBattery(pow.overlay, NULL);
 
 	// setup overlay
 	memset(&pow.oargs, 0, sizeof(struct owlfb_overlay_args));

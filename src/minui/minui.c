@@ -1537,7 +1537,7 @@ int main (int argc, char *argv[]) {
 						char* entry_name = entry->name;
 						char* entry_unique = entry->unique;
 						int available_width = screen->w - SCALE1(PADDING * 2);
-						if (i==top->start) available_width -= ow;
+						if (i==top->start) available_width -= ow + CLOCK_SIZE;
 					
 						SDL_Color text_color = COLOR_WHITE;
 						if (isFavorite(entry->path)) {
