@@ -28,6 +28,16 @@ static int quit;
 static int reset_flag;
 static int show_menu;
 
+static int quit_action = 0;
+static char quit_action_name[16];
+static char* quit_action_labels[] = {
+	"Quit",
+	"Save & Quit",
+	"Reset",
+	NULL
+};
+static int quit_total_actions = 3;
+
 enum {
 	SCALE_NATIVE,
 	SCALE_ASPECT,
@@ -2947,7 +2957,7 @@ void Core_close(void) {
 
 ///////////////////////////////////////
 
-#define MENU_ITEM_COUNT 6
+#define MENU_ITEM_COUNT 5
 #define MENU_SLOT_COUNT 8
 
 enum {
@@ -2955,7 +2965,6 @@ enum {
 	ITEM_SAVE,
 	ITEM_LOAD,
 	ITEM_OPTS,
-	ITEM_RSET,
 	ITEM_QUIT,
 };
 
@@ -2980,8 +2989,7 @@ static struct {
 		[ITEM_SAVE] = "Save",
 		[ITEM_LOAD] = "Load",
 		[ITEM_OPTS] = "Options",
-		[ITEM_RSET] = "Reset",
-		[ITEM_QUIT] = "Save & Quit",
+		[ITEM_QUIT] = "Exit",
 	}
 };
 
@@ -3918,6 +3926,8 @@ static void Menu_loop(void) {
 	getDisplayName(game.name, rom_name);
 	
 	int selected = 0; // resets every launch
+	quit_action = 0; // first option is reseted to 'Quit'	
+	sprintf(quit_action_name, "%s", quit_action_labels[quit_action]);
 	if (exists(slot_path)) menu.slot = getInt(slot_path);
 	if (menu.slot==8) menu.slot = 0;
 	
@@ -3960,6 +3970,11 @@ static void Menu_loop(void) {
 				menu.slot -= 1;
 				if (menu.slot<0) menu.slot += MENU_SLOT_COUNT;
 				dirty = 1;
+			} else if (selected==ITEM_QUIT) {
+				quit_action -= 1;
+				if (quit_action<0) quit_action += quit_total_actions;
+				dirty = 1;
+				sprintf(quit_action_name, "%s", quit_action_labels[quit_action]);
 			}
 		}
 		else if (PAD_justPressed(BTN_RIGHT)) {
@@ -3973,6 +3988,11 @@ static void Menu_loop(void) {
 				menu.slot += 1;
 				if (menu.slot>=MENU_SLOT_COUNT) menu.slot -= MENU_SLOT_COUNT;
 				dirty = 1;
+			} else if (selected==ITEM_QUIT) {
+				quit_action += 1;
+				if (quit_action==quit_total_actions) quit_action -= quit_total_actions;
+				dirty = 1;
+				sprintf(quit_action_name, "%s", quit_action_labels[quit_action]);
 			}
 		}
 		
@@ -4049,14 +4069,16 @@ static void Menu_loop(void) {
 					Menu_options(&options_menu);
 					dirty = 1;
 				break;
-				case ITEM_RSET:
-					reset_flag = 1;
-					show_menu = 0;
-				break;
 				case ITEM_QUIT:
-					status = STATUS_QUIT;
+					if (quit_action==2) { // Reset option selected
+						reset_flag = 1;
+						status = STATUS_RSET;
+					} else {
+						// save & quit is managed by quitting procedure
+						status = STATUS_QUIT;
+						quit = 1; // TODO: tmp?
+					}
 					show_menu = 0;
-					quit = 1; // TODO: tmp?
 				break;
 			}
 			if (!show_menu) break;
@@ -4126,6 +4148,21 @@ static void Menu_loop(void) {
 						});
 						SDL_FreeSurface(text);
 					}
+					// quit actions
+					if (i==ITEM_QUIT) {				
+						GFX_blitPill(ASSET_DARK_GRAY_PILL, screen, &(SDL_Rect){
+							SCALE1(PADDING),
+							SCALE1(oy + PADDING + (i * PILL_SIZE)),
+							screen->w - SCALE1(PADDING * 2),
+							SCALE1(PILL_SIZE)
+						});
+						text = TTF_RenderUTF8_Blended(font.large, quit_action_name, COLOR_WHITE);
+						SDL_BlitSurface(text, NULL, screen, &(SDL_Rect){
+							screen->w - SCALE1(PADDING + BUTTON_PADDING) - text->w,
+							SCALE1(oy + PADDING + (i * PILL_SIZE) + 4)
+						});
+						SDL_FreeSurface(text);
+					}
 					
 					TTF_SizeUTF8(font.large, item, &ow, NULL);
 					ow += SCALE1(BUTTON_PADDING*2);
@@ -4133,7 +4170,7 @@ static void Menu_loop(void) {
 					// pill
 					GFX_blitPill(ASSET_WHITE_PILL, screen, &(SDL_Rect){
 						SCALE1(PADDING),
-						SCALE1(oy + PADDING + (i * (PILL_SIZE - 5))),
+						SCALE1(oy + PADDING + (i * PILL_SIZE)),
 						ow,
 						SCALE1(PILL_SIZE)
 					});
@@ -4144,7 +4181,7 @@ static void Menu_loop(void) {
 					text = TTF_RenderUTF8_Blended(font.large, item, COLOR_BLACK);
 					SDL_BlitSurface(text, NULL, screen, &(SDL_Rect){
 						SCALE1(2 + PADDING + BUTTON_PADDING),
-						SCALE1(1 + PADDING + oy + (i * (PILL_SIZE - 5)) + 4)
+						SCALE1(1 + PADDING + oy + (i * PILL_SIZE) + 4)
 					});
 					SDL_FreeSurface(text);
 				}
@@ -4153,7 +4190,7 @@ static void Menu_loop(void) {
 				text = TTF_RenderUTF8_Blended(font.large, item, text_color);
 				SDL_BlitSurface(text, NULL, screen, &(SDL_Rect){
 					SCALE1(PADDING + BUTTON_PADDING),
-					SCALE1(oy + PADDING + (i * (PILL_SIZE - 5)) + 4)
+					SCALE1(oy + PADDING + (i * PILL_SIZE) + 4)
 				});
 				SDL_FreeSurface(text);
 			}
@@ -4359,7 +4396,7 @@ int main(int argc , char* argv[]) {
 	POW_disableAutosleep();
 	sec_start = SDL_GetTicks();
 	while (!quit) {
-		if (reset_flag) {
+		if (reset_flag==1) {
 			core.reset();
 			reset_flag = 0;
 		}
@@ -4376,7 +4413,7 @@ int main(int argc , char* argv[]) {
 	Menu_quit();
 	
 finish:
-	State_autosave();
+	if (quit_action==1) State_autosave();
 
 	Game_close();
 	Core_unload();
