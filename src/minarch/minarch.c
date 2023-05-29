@@ -504,12 +504,19 @@ static void State_autosave(void) {
 	State_write();
 	state_slot = last_state_slot;
 }
-static void State_resume(void) {
-	if (!exists(RESUME_SLOT_PATH)) return;
-	
+static void State_resume(void) {	
 	int last_state_slot = state_slot;
-	state_slot = getInt(RESUME_SLOT_PATH);
-	unlink(RESUME_SLOT_PATH);
+
+	if (exists(RESUME_SLOT_PATH)) {
+		state_slot = getInt(RESUME_SLOT_PATH);
+		unlink(RESUME_SLOT_PATH);
+		if( state_slot == 8 ) {
+			state_slot = AUTO_RESUME_SLOT;
+		}
+	} else {
+		state_slot = AUTO_RESUME_SLOT;
+	}
+
 	State_read();
 	state_slot = last_state_slot;
 }
@@ -4357,6 +4364,7 @@ int main(int argc , char* argv[]) {
 	Menu_quit();
 	
 finish:
+	State_autosave();
 
 	Game_close();
 	Core_unload();
