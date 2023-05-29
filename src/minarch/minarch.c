@@ -2981,7 +2981,7 @@ static struct {
 		[ITEM_LOAD] = "Load",
 		[ITEM_OPTS] = "Options",
 		[ITEM_RSET] = "Reset",
-		[ITEM_QUIT] = "Quit",
+		[ITEM_QUIT] = "Save & Quit",
 	}
 };
 
