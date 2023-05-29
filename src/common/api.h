@@ -120,7 +120,7 @@ int GFX_wrapText(TTF_Font* font, char* str, int max_width, int max_lines);
 void GFX_blitAsset(int asset, SDL_Rect* src_rect, SDL_Surface* dst, SDL_Rect* dst_rect);
 void GFX_blitPill(int asset, SDL_Surface* dst, SDL_Rect* dst_rect);
 void GFX_blitRect(int asset, SDL_Surface* dst, SDL_Rect* dst_rect);
-void GFX_blitBattery(SDL_Surface* dst, SDL_Rect* dst_rect);
+void GFX_blitClockAndBattery(SDL_Surface* dst, SDL_Rect* dst_rect);
 int GFX_getButtonWidth(char* hint, char* button);
 void GFX_blitButton(char* hint, char*button, SDL_Surface* dst, SDL_Rect* dst_rect);
 void GFX_blitMessage(TTF_Font* font, char* msg, SDL_Surface* dst, SDL_Rect* dst_rect);
@@ -232,9 +232,9 @@ int POW_isCharging(void);
 int POW_getBattery(void);
 
 #define CPU_SPEED_MENU			 504000 // 500 MHz
-#define CPU_SPEED_POWERSAVE 	720000 // 720 MHz
-#define CPU_SPEED_NORMAL 		1008000 // 1.0 GHz
-#define CPU_SPEED_PERFORMANCE	1296000 // 1.3 GHz
+#define CPU_SPEED_POWERSAVE 	504000 // 500 MHz
+#define CPU_SPEED_NORMAL 		720000 // 720 MHz
+#define CPU_SPEED_PERFORMANCE	1008000 // 1.0 GHz
 // Reference overclock.c
 void POW_setCPUSpeed(int speed);
 
