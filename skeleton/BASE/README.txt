@@ -68,6 +68,10 @@ Reduce/increase brightness:
 
   MENU + VOLUME UP or VOLUME DOWN
 
+Add/remove Favorites (from menu):
+
+  SELECT
+
 The remaining emulation shortcuts are all user defined.
 
 ----------------------------------------

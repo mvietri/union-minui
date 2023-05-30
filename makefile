@@ -19,6 +19,10 @@ RELEASE_BASE=FinUI-$(RELEASE_TIME)b
 RELEASE_DOT!=find ./releases/. -regex ".*/$(RELEASE_BASE)-[0-9]+-base\.zip" -printf '.' | wc -m
 RELEASE_NAME=$(RELEASE_BASE)-$(RELEASE_DOT)
 
+ifeq (,$(BUILD_HASH))
+BUILD_HASH="devRelease"
+endif
+
 # TODO: this needs to consider the different platforms, eg. rootfs.ext2 should only be copied in rg35xx-toolchain
 
 all: lib sys all-cores tools bundle readmes zip report
@@ -102,14 +106,14 @@ zip:
 	cd ./build/PAYLOAD && zip -r MinUI.zip .system
 	mv ./build/PAYLOAD/MinUI.zip ./build/BASE
 
-	cd ./build/BASE && zip -r ../../releases/$(RELEASE_NAME)-base.zip Bios Roms Saves dmenu.bin MinUI.zip README.txt INSTALL.txt SHORTCUTS.txt
-	cd ./build/EXTRAS && zip -r ../../releases/$(RELEASE_NAME)-extras.zip Bios Emus Roms Saves Tools README.txt
+	cd ./build/BASE && zip -r ../../releases/$(RELEASE_NAME)-base.zip Bios Roms Saves Screenshots dmenu.bin MinUI.zip README.txt INSTALL.txt SHORTCUTS.txt
+	cd ./build/EXTRAS && zip -r ../../releases/$(RELEASE_NAME)-extras.zip Bios Emus Roms Saves Screenshots Tools README.txt
 
 	rm -fr ./build/FULL
 	mkdir ./build/FULL
 	cp -fR ./build/BASE/* ./build/FULL/
 	cp -fR ./build/EXTRAS/* ./build/FULL/
-	cd ./build/FULL && zip -r ../../releases/$(RELEASE_NAME)-full.zip Bios Emus Roms Saves Tools dmenu.bin MinUI.zip INSTALL.txt SHORTCUTS.txt
+	cd ./build/FULL && zip -r ../../releases/$(RELEASE_NAME)-full.zip Bios Emus Roms Saves Screenshots Tools dmenu.bin MinUI.zip INSTALL.txt SHORTCUTS.txt
 
 	echo "$(RELEASE_NAME)" > ./build/latest.txt
 

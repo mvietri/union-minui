@@ -7,6 +7,7 @@ export SYSTEM_PATH="$SDCARD_PATH/.system/rg35xx"
 export CORES_PATH="$SYSTEM_PATH/cores"
 export USERDATA_PATH="$SDCARD_PATH/.userdata/rg35xx"
 export LOGS_PATH="$USERDATA_PATH/logs"
+export SCREENSHOTS_PATH="$SDCARD_PATH/Screenshots"
 
 #######################################
 
