@@ -31,8 +31,8 @@ static int show_menu;
 static int quit_action = 0;
 static char quit_action_name[16];
 static char* quit_action_labels[] = {
-	"Quit",
 	"Save & Quit",
+	"Quit",
 	"Reset",
 	NULL
 };
@@ -3970,7 +3970,7 @@ static void Menu_loop(void) {
 	getDisplayName(game.name, rom_name);
 	
 	int selected = 0; // resets every launch
-	quit_action = 0; // first option is reseted to 'Quit'	
+	quit_action = 0; // first option resets to 'Save & Quit'
 	sprintf(quit_action_name, "%s", quit_action_labels[quit_action]);
 	if (exists(slot_path)) menu.slot = getInt(slot_path);
 	if (menu.slot==8) menu.slot = 0;
@@ -4118,7 +4118,7 @@ static void Menu_loop(void) {
 						reset_flag = 1;
 						status = STATUS_RSET;
 					} else {
-						// save & quit is managed by quitting procedure
+						// 'save & quit' or quit is managed by quitting procedure
 						status = STATUS_QUIT;
 						quit = 1; // TODO: tmp?
 					}
@@ -4457,7 +4457,7 @@ int main(int argc , char* argv[]) {
 	Menu_quit();
 	
 finish:
-	if (quit_action==1) State_autosave();
+	if (quit_action==0) State_autosave();
 
 	Game_close();
 	Core_unload();
