@@ -1,10 +1,5 @@
 #!/system/bin/sh
 
-# Enable Android Debug Bridge
-if [ -f /misc/enableADB ]; then
-	/usbdbg.sh device
-fi
-
 echo 0xF > /sys/devices/system/cpu/autoplug/plug_mask
 
 TF1_PATH=/mnt/mmc # ROMS partition
@@ -29,6 +24,11 @@ if [ $? -ne 0 ]; then
 		rm -rf $TF2_PATH
 		ln -s $TF1_PATH $TF2_PATH
 	fi
+fi
+
+# Enable Android Debug Bridge
+if [ -f /mnt/mmc/enableADB ]; then
+	/usbdbg.sh device
 fi
 
 if [ -d ${TF1_PATH}${SYSTEM_FRAG} ] || [ -f ${TF1_PATH}${UPDATE_FRAG} ]; then

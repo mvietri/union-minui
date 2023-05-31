@@ -1560,23 +1560,33 @@ void POW_update(int* _dirty, int* _show_setting, POW_callback_t before_sleep, PO
 void POW_disablePowerOff(void) {
 	pow.can_poweroff = 0;
 }
+void POW_sync(char* msg) {
+	GFX_clear(gfx.screen);
+	GFX_blitMessage(font.large, msg, gfx.screen, NULL);
+	GFX_flip(gfx.screen);
+
+	system("sync");
+	system("echo s > /proc/sysrq-trigger");
+	system("echo u > /proc/sysrq-trigger");
+	system("sync");
+	
+	sleep(2);
+}
 void POW_powerOff(void) {
 	if (pow.can_poweroff) {
 		char* msg = exists(AUTO_RESUME_PATH) ? "Quicksave created,\npowering off" : "Powering off";
-		GFX_clear(gfx.screen);
-		GFX_blitMessage(font.large, msg, gfx.screen, NULL);
-		GFX_flip(gfx.screen);
-
-		system("sync");
-		system("echo s > /proc/sysrq-trigger");
-		system("echo u > /proc/sysrq-trigger");
-		system("sync");
-
-		sleep(2);
+		POW_sync(msg);
 		
 		// actual shutdown
 		system("echo o > /proc/sysrq-trigger");
 	}
+}
+void POW_reboot(void) { 
+	char* msg = "Rebooting";	
+	POW_sync(msg);
+	
+	// trigger reboot
+	system("echo b > /proc/sysrq-trigger"); 
 }
 
 #define BACKLIGHT_PATH "/sys/class/backlight/backlight.2/bl_power"

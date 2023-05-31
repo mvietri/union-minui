@@ -45,6 +45,7 @@ all-cores:
 tools:
 	cd ./src/clock && make
 	cd ./src/clear_recent && make
+	cd ./src/toggle_adb && make
 	cd ./other/DinguxCommander && make -j
 
 bundle:
@@ -73,6 +74,7 @@ bundle:
 	cp ./src/minui/minui.elf ./build/SYSTEM/rg35xx/paks/MinUI.pak
 	cp ./src/clock/clock.elf ./build/EXTRAS/Tools/rg35xx/Clock.pak
 	cp ./src/clear_recent/clear_recent.elf "./build/EXTRAS/Tools/rg35xx/Clear Recently Played.pak"
+	cp ./src/toggle_adb/toggle_adb.elf "./build/EXTRAS/Tools/rg35xx/Toggle ADB.pak"
 
 	# stock cores
 	cp ./cores/output/fceumm_libretro.so ./build/SYSTEM/rg35xx/cores
@@ -131,4 +133,5 @@ clean:
 	cd ./cores && make clean
 	cd ./src/clock && make clean
 	cd ./src/clear_recent && make clean
+	cd ./src/toggle_adb && make clean
 	cd ./other/DinguxCommander && make clean

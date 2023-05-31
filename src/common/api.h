@@ -220,8 +220,10 @@ void POW_warn(int enable);
 
 void POW_update(int* dirty, int* show_setting, POW_callback_t before_sleep, POW_callback_t after_sleep);
 
+void POW_sync(char* msg);
 void POW_disablePowerOff(void);
 void POW_powerOff(void);
+void POW_reboot(void);
 
 void POW_fauxSleep(void);
 void POW_disableAutosleep(void);
