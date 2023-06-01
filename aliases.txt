@@ -1,0 +1,18 @@
+2020bb:2020 Super Baseball
+alpham2:Alpha Mission II
+mslug:Metal Slug - Super Vehicle-001
+neogeo:Neo-Geo MV-6F
+mslug2:Metal Slug 2 - Super Vehicle-001/II
+mslug2t:Metal Slug 2 Turbo
+mslug3h:Metal Slug 3
+mslug3:Metal Slug 3
+mslug3a:Metal Slug 3
+mslug4h:Metal Slug 4
+mslug4:Metal Slug 4
+mslug5b:Metal Slug 5
+mslug5:Metal Slug 5
+mslug5h:Metal Slug 5
+mslug6:Metal Slug 6
+awbios:Atomiswave Bios
+mslug3b6:Metal Slug 6
+mslugx:Metal Slug X - Super Vehicle-001

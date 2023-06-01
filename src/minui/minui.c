@@ -114,6 +114,7 @@ typedef struct Entry {
 	char* path;
 	char* name;
 	char* unique;
+	char* alias; // for neogeo and others where you cannot change the rom filename
 	int type;
 	int alpha; // index in parent Directory's alphas Array, which points to the index of an Entry in its entries Array :sweat_smile:
 } Entry;
@@ -125,6 +126,7 @@ static Entry* Entry_new(char* path, int type) {
 	self->path = strdup(path);
 	self->name = strdup(display_name);
 	self->unique = NULL;
+	self->alias = NULL;
 	self->type = type;
 	self->alpha = 0;
 	return self;
@@ -133,6 +135,7 @@ static void Entry_free(Entry* self) {
 	free(self->path);
 	free(self->name);
 	if (self->unique) free(self->unique);
+	if (self->alias) free(self->alias);
 	free(self);
 }
 
@@ -1299,6 +1302,36 @@ int main (int argc, char *argv[]) {
 	POW_setCPUSpeed(CPU_SPEED_MENU);
 	GFX_setVsync(VSYNC_STRICT);
 
+	FILE *aliases = fopen(ALIASES_PATH, "r"); 
+	int aIndex = 0;
+    char* original[50];
+    char* alias[50];
+    char line[75];
+		
+	if (aliases) {
+	    while(fgets(line, sizeof line, aliases)!=NULL) {
+		    original[aIndex] = malloc(sizeof(line));
+		    alias[aIndex] = malloc(sizeof(line));
+
+		    int set_alias = 0;
+		    char* split = strtok(line, ":");
+			
+   			while(split) {
+   				if (!set_alias) {
+		    		strcpy(original[aIndex], split);
+		    		set_alias = 1;
+   				} else {
+   					strcpy(alias[aIndex], split);
+   				}
+     			split = strtok(NULL, ":");
+   			}
+
+		    aIndex++;
+		}
+
+	    fclose(aliases);
+	}
+
 	PAD_reset();
 	int dirty = 1;
 	int show_version = 0;
@@ -1536,6 +1569,7 @@ int main (int argc, char *argv[]) {
 						Entry* entry = top->entries->items[i];
 						char* entry_name = entry->name;
 						char* entry_unique = entry->unique;
+						char* entry_alias = entry->alias;
 						int available_width = screen->w - SCALE1(PADDING * 2);
 						if (i==top->start) available_width -= ow + CLOCK_SIZE;
 					
@@ -1543,7 +1577,24 @@ int main (int argc, char *argv[]) {
 						if (isFavorite(entry->path)) {
 							text_color = COLOR_GOLD;
 						}
+
+						if (aIndex > 0) {						
+							for(int a = 0; a < aIndex; ++a)
+							{
+							    if(!strcmp(original[a], entry_name))
+							    {
+							        entry_alias = strdup(alias[a]);
+							    }
+							}
+						}
 					
+						if (entry_alias!=NULL) {
+							// has alias, we display these over the others
+							entry_unique = NULL;
+							entry_name = strdup(entry_alias);
+							LOG_info("new entry name: %s\n", entry_name);
+						}
+
 						trimSortingMeta(&entry_name);
 					
 						char display_name[256];
