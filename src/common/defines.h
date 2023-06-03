@@ -62,6 +62,7 @@
 #define BATTERY_PATH SDCARD_PATH "/battery.txt"
 #define SCREENSHOTS_PATH SDCARD_PATH "/Screenshots"
 #define ADB_FLAG_PATH SDCARD_PATH "/enableADB"
+#define ALIASES_PATH SDCARD_PATH "/Roms/aliases.txt"
 
 #define LAST_PATH "/tmp/last.txt" // transient
 #define CHANGE_DISC_PATH "/tmp/change_disc.txt"

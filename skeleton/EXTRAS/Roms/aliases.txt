@@ -1,0 +1,527 @@
+#Avoid complex names
+#Separator is '~'. Do not include that in the alias
+#Lines starting with '#' are comments and are not count
+#Keep below 1000 including comments
+#
+#Works for any list (collections, favorites, consoles, etc)
+#Real filename will be shown on game's menu. This only affects main menu listing.
+#
+#NEOGEO~##
+2020bb~2020 Super Baseball
+sonicwi2~Aero Fighters 2
+sonicwi3~Aero Fighters 3
+aodk~Aggressors of Dark KombatWold
+alpham2~Alpha Mission II
+androdun~Andro Dunos
+aof2~Art of Fighting 2
+aof~Art of Fighting
+bangbead~Bang Bead
+bstars2~Baseball Stars 2
+bstars~Baseball Stars Professional
+flipshot~Battle Flip Shot
+blazstar~Blazing Star
+bjourney~Blue's Journey
+breakrev~Breakers Revenge
+breakers~Breakers
+burningf~Burning Fight
+ctomaday~Captain Tomaday
+gowcaizr~Chojin Gakuen Gowcaizer
+crsword~Crossed Swords
+cyberlip~Cyber-Lip
+doubledr~Double Dragon
+eightman~Eight Man
+kabukikl~Far East of Eden: Kabuki Klash
+fatfury1~Fatal Fury: King of Fighters
+fatfury2~Fatal Fury 2
+fatfury3~Fatal Fury 3: Road to the Final Victory
+fatfursp~Fatal Fury Special
+fightfev~Fight Fever
+karnovr~Fighter's History Dynamite
+wjammers~Flying Power Disc
+fbfrenzy~Football Frenzy
+galaxyfg~Galaxy Fight: Universal Warriors
+ganryu~Ganryu
+garou~Garou: Mark of the Wolves
+gpilots~Ghost Pilots
+ghostlop~Ghostlop
+goalx3~Goal! Goal! Goal!
+gururin~Gururin
+kotm2~King of the Monsters 2 - The Next Thing
+kotm~King of the Monsters
+kizuna~Kizuna Encounter - Super Tag Battle
+lresort~Last Resort
+lbowling~League Bowling
+legendos~Legend of Success Joe
+magdrop2~Magical Drop II
+magdrop3~Magical Drop III
+maglord~Magician Lord
+matrim~Matrimelee
+mslug~Metal Slug - Super Vehicle-001
+mslug2~Metal Slug 2 - Super Vehicle-001/II
+mslug3~Metal Slug 3
+mslug4~Metal Slug 4
+mslug5~Metal Slug 5
+mslugx~Metal Slug X - Super Vehicle-001
+mutnat~Mutation Nation
+nam1975~NAM-1975
+neobombe~Neo Bomberman
+neodrift~Neo Drift Out - New Technology
+neomrdo~Neo Mr. Do!
+turfmast~Neo Turf Masters
+neocup98~Neo-Geo Cup '98 - The Road to the Victory
+nitd~Nightmare in the Dark
+ncombat~Ninja Combat
+ncommand~Ninja Commando
+ninjamas~Ninja Master's: Haō Ninpō Chō
+zedblade~Operation Ragnarok
+overtop~Over Top
+panicbom~Panic Bomber
+pgoal~Pleasure Goal
+pnyaa~Pochi and Nyaa
+popbounc~Pop 'n Bounce
+pspikes2~Power Spikes II
+preisle2~Prehistoric Isle 2
+pulstar~Pulstar
+pbobbl2n~Puzzle Bobble 2
+pbobblen~Puzzle Bobble
+puzzledp~Puzzle De Pon!
+joyjoy~Puzzled
+rotd~Rage of the Dragons
+ragnagrd~Ragnagard
+rbff2~Real Bout Fatal Fury 2 - The Newcomers
+rbffspec~Real Bout Fatal Fury Special
+rbff1~Real Bout Fatal Fury
+ridhero~Riding Hero
+roboarmy~Robo Army
+aof3~Ryuuko no Ken Gaiden
+samsho2~Samurai Shodown II
+samsho3~Samurai Shodown III
+samsho4~Samurai Shodown IV - Amakusa's Revenge
+samsho5~Samurai Shodown V
+samsh5sp~Samurai Shodown V Special
+samsho~Samurai Shodown
+savagere~Savage Reign
+sengoku2~Sengoku 2
+sengoku3~Sengoku 3
+sengoku~Sengoku
+shocktr2~Shock Troopers: 2nd Squad
+shocktro~Shock Troopers
+socbrawl~Soccer Brawl
+spinmast~Spin Master
+stakwin2~Stakes Winner 2
+stakwin~Stakes Winner
+strhoop~Street Hoop
+s1945p~Strikers 1945 Plus
+sdodgeb~Super Dodge Ball
+ssideki2~Super Sidekicks 2 - The World Championship
+ssideki3~Super Sidekicks 3 - The Next Glory
+ssideki~Super Sidekicks
+svc~SVC Chaos - SNK Vs. Capcom
+irrmaze~The Irritating Maze
+kof2000~The King of Fighters 2000
+kof2001~The King of Fighters 2001
+kof2002~The King of Fighters 2002
+kof2003~The King of Fighters 2003
+kof94~The King of Fighters '94
+kof95~The King of Fighters '95
+kof96~The King of Fighters '96
+kof97~The King of Fighters '97
+kof98~The King of Fighters '98 - The Slugfest
+kof99~The King of Fighters '99: Millennium Battle
+lastbld2~The Last Blade 2
+lastblad~The Last Blade
+superspy~The Super Spy
+ssideki4~The Ultimate 11: SNK Football Championship
+trally~Thrash Rally
+tophuntr~Top Hunter: Roddy & Cathy
+tpgolf~Top Player's Golf
+totc~Treasure of the Caribbean
+twinspri~Twinkle Star Sprites
+viewpoin~Viewpoint
+vliner~V-Liner
+wakuwak7~Waku Waku 7
+wh2j~World Heroes 2 Jet
+wh2~World Heroes 2
+whp~World Heroes Perfect
+wh1~World Heroes
+zupapa~Zupapa!
+neogeo~ZZZ
+#ARCADE~##
+1941~1941: Counter Attack
+1942~1942
+1943kai~1943 Kai: Midway Kaisen
+1943~1943: The Battle of Midway
+1944~1944: The Loop Master
+19xx~19XX: The War Against Destiny
+720~720 Degrees
+actfancr~Act-Fancer: Cybernetick Hyper Weapon
+aburner2~After Burner II
+aburner~After Burner
+airwolf~Airwolf
+typhoon~Ajax
+lwings~Ales no Tsubasa: The Legendary Soldiers
+astorm~Alien Storm
+aliensyn~Alien Syndrome
+aliensu~Aliens
+avspu~Aliens Versus Predator
+aligatun~Alligator Hunt
+altbeast~Altered Beast
+amidar~Amidar
+aquajack~Aqua Jack
+unsquad~Area 88
+rygar~Argus no Senshi
+arknoid2~Arkanoid - Revenge Of Doh
+arknoidu~Arkanoid
+batrider~Armed Police Batrider
+asterix~Asterix
+asteroid~Asteroids
+avspirit~Avenging Spirit
+bankp~Bank Panic
+batman~Batman
+batcir~Battle Circuit
+bzone~Battle Zone
+btoads~Battletoads
+blswhstl~Bells & Whistles
+berzerk1~Berzerk
+biomtoy~Biomechanical Toy
+blktiger~Black Tiger
+bwidow~Black Widow
+blstroid~Blasteroids
+bogeyman~Bogey Manor
+bombjack~Bomb Jack
+bosco~Bosconian
+bubbobr1~Bubble Bobble
+bubsympu~Bubble Symphony
+bubbles~Bubbles
+buckrog~Buck Rogers: Planet of Zoom
+buckyua~Bucky O'Hare
+bnj~Bump 'n' Jump
+btime~Burger Time
+bbros~Buster Bros.
+cabal~Cabal
+dinou~Cadillacs Kyouryuu-Shinseiki
+dino~Cadillacs and Dinosaurs
+captavnu~Captain America And The Avengers
+captcomu~Captain Commando
+centtime~Centipede
+chasehq~Chase H.q.
+chplft~Choplifter
+circusc~Circus Charlie
+citycon~City Connection
+columns~Columns
+commandu~Commando
+congo~Congo Bongo
+contra~Contra
+cclimber~Crazy Climber
+crimfgt2~Crime Fighters
+cbuster~Crude Buster
+ccastles~Crystal Castles
+cybots~Cyberbots: Fullmetal Madness
+cyvern~Cyvern - The Dragon Weapons
+ddcrew~D. D. Crew
+ghoulsu~Dai Makai-Mura
+darkseal~Dark Seal
+pow~Datsugoku: Prisoners of War
+deadconx~Dead Connection
+defendg~Defender
+dassault~Desert Assault
+digdug~Dig Dug
+digdug2~Dig Dug II
+dogyuun~Dogyuun
+dondokod~Don Doko Don
+dkongo~Donkey Kong
+dkong3~Donkey Kong 3
+dkongjr~Donkey Kong Junior
+donpachi~DonPachi
+ddragonu~Double Dragon
+ddragn2u~Double Dragon II - The Revenge
+drtoppel~Dr. Toppel's Adventure
+dbreed~Dragon Breed
+dsaber~Dragon Saber
+baddudes~Dragonninja
+lightbr~Dungeon Magic
+ddsomu~Dungeons & Dragons: Shadow over Mystara
+ddtodu~Dungeons & Dragons: Tower of Doom
+dw~Dynasty Wars
+ecofghtr~Eco Fighters
+elevator~Elevator Action
+elvactr~Elevator Action Returns
+enduror~Enduro Racer
+exedexes~Exed Exes
+fantzone~Fantasy Zone
+fantzn2~Fantasy Zone II: The Tears of Opa-Opa
+ffightu~Final Fight
+ffight~Final Fight
+flicky~Flicky
+foodf~Food Fight
+forgottn~Forgotten Worlds
+frogger~Frogger
+funkyjet~Funky Jet
+gijoeu~G.I. Joe
+galaga~Galaga
+galaga88~Galaga ´88
+galaxian~Galaxian
+galmedes~Galmedes
+gangwars~Gang Wars
+gaplus~Gaplus
+gaunt2p~Gauntlet
+gaunt22p~Gauntlet 2
+gigawing~Giga Wing
+godzilla~Godzilla
+goldnaxe~Golden Axe
+ga2~Golden Axe: The Revenge of Death Adder
+gorf~Gorf
+gradius~Gradius
+gradius2~Gradius II: Gofer no Yab
+grdius3e~Gradius III
+dimahoo~Great Mahou Daisakusen
+growlu~Growl
+grdians~Guardians: Denjin Makai II
+gunsmoku~Gun.Smoke
+gnbarich~Gunbarich
+gunbird2~Gunbird 2
+gunforc2~GunForce II
+gunlock~Gunlock
+gunnail~GunNail
+guwange~Guwange
+gyruss~Gyruss
+hharryu~Hammerin' Harry
+hangon~Hang-on
+hattrick~Hat Trick
+heatbrlu~Heated Barrel
+hvysmsh~Heavy Smash
+hitice~Hit The Ice
+hooku~Hook
+horizon~Horizon
+trackfld~Hyper Olympic
+irobot~I, Robot
+ikari3nr~Ikari III - The Rescue
+ikarijpb~Ikari Warriors
+imgfight~Image Fight
+inthunt~In the Hunt
+offroad~Ironman Ivan Stewart's Super Off-road
+jailbrek~Jail Break
+journey~Journey
+joust~Joust
+jungleh~Jungle King
+junofrst~Juno First
+kangaroo~Kangaroo
+kchamp~Karate Dou
+karnov~Karnov
+kick~Kick
+shaolins~Kicker
+klax~Klax
+knightsu~Knights of the Round
+kungfum~Kung-fu Master
+landmkrp~Land Maker
+loht~Legend of Hero Tonma
+lethalth~Lethal Thunder
+lifefrce~Life Force
+liquidk~Liquid Kids
+ldrun~Lode Runner
+ldrun2~Lode Runner II - The Bungeling Strikes Back
+ldrun4~Lode Runner IV - Teikoku Karano Dasshutsu
+loderndf~Lode Runner: The Dig Fight
+looping~Looping
+llander~Lunar Lander
+macrossp~Macross Plus
+mswordu~Magic Sword
+mgcrystl~Magical Crystals
+mhavoc~Major Havoc
+gngt~Makai-Mura
+mappy~Mappy
+marble~Marble Madness
+mario~Mario Bros.
+mmatrix~Mars Matrix: Hyper Solid Shooting
+mshvsf~Marvel Super Heroes vs. Street Fighter
+mshvsfj~Marvel Super Heroes vs. Street Fighter
+mvsc~Marvel vs. Capcom: Clash of Super Heroes
+mazinger~Mazinger Z
+mtwins~Mega Twins
+mercs~Mercs
+metmqstr~Metamoqester
+metamrph~Metamorphic Force
+moonwalk~Michael Jackson's Moonwalker
+gtmr2~Mille Miglia 2: Great 1000 Miles Rally
+milliped~Millipede
+missile~Missile Command
+monsterb~Monster Bash
+mpatrol~Moon Patrol
+mk~Mortal Kombat
+mk2~Mortal Kombat 2
+mk3~Mortal Kombat 3
+mrdo~Mr. Do!
+docastle~Mr. Do's Castle
+mspacman~Ms. Pac-Man
+mbombrd~Muscle Bomber Duo: Ultimate Team Battle
+mystwaru~Mystic Warriors
+narc~Narc
+nbajam~Nba Jam
+nbajamte~NBA Jam Tournament Edition
+nemo~Nemo
+nrallyx~New Rally X
+nibbler~Nibbler
+nslasher~Night Slashers
+nbbatman~Ninja Baseball Bat Man
+gaiden~Ninja Gaiden
+nspirit~Ninja Spirit
+ninjakd2~Ninja-Kid II
+nitrobal~Nitro Ball
+noboranb~Noboranka
+candance~Osman
+outrunb~Out Run
+outzone~Out Zone
+pacland~Pac-Land
+pacman~Pac-Man
+pang3~Pang! 3
+paperboy~Paperboy
+parodius~Parodius Da!
+pengo~Pengo
+peterpak~Peter Pack Rat
+phoenix~Phoenix
+pipedrm~Pipe Dream
+pitfight~Pit Fighter
+sgemf~Pocket Fighter
+polepos~Pole Position
+polepos2~Pole Position II
+pooyan~Pooyan
+popeyef~Popeye
+armwaru~Powered Gear: Strategic Variant Armor Equipment
+progear~Progear No Arashi
+punchout~Punch-out!!
+punksht2~Punk Shot
+puyopuya~Puyo Puyo
+puyopuy2~Puyo Puyo 2
+puzloopu~Puzz Loop
+qbert~Q*bert
+qix~Qix
+rallyx~Rally X
+rampage~Rampage
+ramprt2p~Rampart
+rastanu~Rastan
+renegade~Renegade
+ringking~Ring King
+robocop~Robocop
+robocp2u~Robocop 2
+robotron~Robotron: 2084
+megaman2~Rockman 2: The Power Fighters
+rocnrope~Roc'n Rope
+rohgau~Rohga Armor Force
+rthunder~Rolling Thunder
+rthun2~Rolling Thunder 2
+rtypeu~R-Type
+rtype2~R-Type II
+rtypeleo~R-Type Leo
+rushatck~Rush'n Attack
+chinagat~Sai Yu Gou Ma Roku
+stdragon~Saint Dragon
+shollow~Satan's Hollow
+slammasu~Saturday Night Slam Masters
+seawolf~Sea Wolf
+seganinu~Sega Ninja
+sonic~Segasonic The Hedgehog
+samuraia~Sengoku Aces
+shdancer~Shadow Dancer
+shadfrce~Shadow Force
+shinobi~Shinobi
+sidearmr~Side Arms - Hyper Dyne
+sinistar~Sinistar
+slyspy~Sly Spy
+smashtv~Smash T.V.
+snowbrob~Snow Bros. - Nick & Tom
+solomon~Solomon no Kagi
+sonson~Son Son
+aerofgt~Aero Fighters
+sharrier~Space Harrier
+invaders~Space Invaders
+spidey~Spider-Man: The Videogame
+splatter~Splatter House
+spyhunt~Spy Hunter
+starcas~Star Castle
+starwars~Star Wars
+stmblade~Storm Blade
+sf1us~Street Fighter
+sf2t~Street Fighter II': Champion Edition
+sf2~Street Fighter II: The World Warrior
+sfa2~Street Fighter Zero 2
+sfa3~Street Fighter Zero 3
+strider~Strider Hiryu
+s1945~Strikers 1945
+s1945ii~Strikers 1945 II
+s1945iii~Strikers 1945 III
+ssrdrubc~Sunset Riders
+scontra~Super Contra
+shangon~Super Hang-on
+ringdest~Super Muscle Bomber: The International Blowout
+superpac~Super Pac-Man
+spnchout~Super Punch-out!!
+spf2t~Super Puzzle Fighter II X
+macross2~Super Spacefortress Macross II
+macross~Super Spacefortress Macross
+ssprint~Super Sprint
+ssf2t~Super Street Fighter II Turbo
+superman~Superman
+tapper~Tapper
+trojan~Tatakai no Banka
+wildfang~Tecmo Knight
+tmnt2po~Teenage Mutant Ninja Turtles
+tmnt22p~Teenage Mutant Ninja Turtles: Turtles in Time
+tekken~Tekken
+tekken2~Tekken 2
+tekken3~Tekken 3
+tempest~Tempest
+wofu~Tenchi wo Kurau II: Sekiheki no Tatakai
+tetris~Tetris
+edrandy~The Cliffhanger: Edward Randy
+ctribe~The Combatribes
+boogwing~The Great Ragtime Show
+kodu~The King of Dragons
+lkage~The Legend of Kage
+mainev2p~The Main Event
+tnzsb~The NewZealand Story
+ninjak~The Ninja Kids
+outfxies~The Outfoxies
+punishru~The Punisher
+ghostb~The Real Ghostbusters
+simpsn2p~The Simpsons
+3wonderu~Three Wonders
+thndrbld~Thunder Blade
+timeplt~Time Pilot
+tokiu~Toki
+toobin~Toobin
+bionicc~Top Secret
+tigeroad~Tora e no Michi
+tron~Tron
+truxton2~Truxton II
+tumblep~Tumble Pop
+vball~U.S. Championship V'ball
+cawingu~U.S. Navy
+umk3~Ultimate Mortal Kombat 3
+uccops~Undercover Cops
+upndown~Up'n Down
+valkyrie~Valkyrie no Densetsu
+nwarr~Vampire Hunter: Darkstalkers Revenge
+vsav2~Vampire Savior 2: The Lord of Vampire
+vsavu~Vampire Savior: The Lord of Vampire
+dstlku~Vampire: The Night Warriors
+varthu~Varth: Operation Thunderstorm
+vendet2p~Vendetta
+vigilntu~Vigilante
+viostorm~Violent Storm
+vf~Virtua Fighter
+volfied~Volfied
+mooua~Wild West C.o.w.-boys Of Moo Mesa
+willow~Willow
+wow~Wizard Of Wor
+wboyu~Wonder Boy
+wb3~Wonder Boy III - Monster Lair
+wbmlb~Wonder Boy In Monster Land
+xmultipl~X Multiply
+xevious~Xevious
+xexex~Xexex
+xmen2p~X-Men
+xmvsfu~X-Men vs. Street Fighter
+xmcotau~X-Men: Children of the Atom
+zaxxon~Zaxxon
+zerowing~Zero Wing
+zookeep~Zoo Keeper
