@@ -549,46 +549,6 @@ static void State_resume(void) {
 	State_read();
 	state_slot = last_state_slot;
 }
-static void Take_screenshot(void) {	
-	char bmp_path[256];
-	char screenshot_dir[256];
-
-	sprintf(screenshot_dir, SCREENSHOTS_PATH);
-	mkdir(screenshot_dir, 0755);	
-
-	SDL_Surface* backing = GFX_getBufferCopy();
-	SDL_Surface* snapshot = SDL_CreateRGBSurface(SDL_SWSURFACE, FIXED_WIDTH,FIXED_HEIGHT,FIXED_DEPTH,0,0,0,0);	 
-	
-	if (backing->w==FIXED_WIDTH && backing->h==FIXED_HEIGHT) {
-		SDL_BlitSurface(backing, NULL, snapshot, NULL);
-	}
-	else {
-		Downsample(backing->pixels,snapshot->pixels,backing->w,backing->h,backing->pitch,snapshot->pitch);
-	}
-
-	// Get the current date and time for the screenshot filename
-	time_t currentTime = time(NULL);
-	struct tm* timeinfo = localtime(&currentTime);
- 	int day = timeinfo->tm_mday;
-	int month = timeinfo->tm_mon + 1;
-	int year = timeinfo->tm_year + 1900;
-
-	int hours = timeinfo->tm_hour;
-	int minutes = timeinfo->tm_min;
-	int seconds = timeinfo->tm_sec; 
-
-	// Convert hours and minutes to strings
-	char timeStr[16];
-	snprintf(timeStr, sizeof(timeStr), "%04d%02d%02d_%02d%02d%02d", year, month, day, hours, minutes, seconds);
-	sprintf(bmp_path, "%s/%s.bmp", screenshot_dir, timeStr);
- 
-	SDL_RWops* out = SDL_RWFromFile(bmp_path, "wb");
-
-	SDL_SaveBMP_RW(snapshot, out, 1);
-
-	SDL_FreeSurface(snapshot);
-	SDL_FreeSurface(backing);
-}
 
 ///////////////////////////////
 
@@ -666,7 +626,6 @@ enum {
 	SHORTCUT_TOGGLE_SCANLINES,
 	SHORTCUT_TOGGLE_FF,
 	SHORTCUT_HOLD_FF,
-	SHORTCUT_TAKE_SCREENSHOT,
 	SHORTCUT_COUNT,
 };
 
@@ -906,7 +865,6 @@ static struct Config {
 		[SHORTCUT_TOGGLE_SCANLINES]		= {"Toggle Scanlines",	-1, BTN_ID_NONE, 0},
 		[SHORTCUT_TOGGLE_FF]			= {"Toggle FF",			-1, BTN_ID_NONE, 0},
 		[SHORTCUT_HOLD_FF]				= {"Hold FF",			-1, BTN_ID_NONE, 0},
-		[SHORTCUT_TAKE_SCREENSHOT]	    = {"Take Screenshot",	-1, BTN_ID_NONE, 0},
 		{NULL}
 	},
 };
@@ -1490,9 +1448,6 @@ static void input_poll_callback(void) {
 						if (screen_scaling==SCALE_NATIVE) {
 							Config_syncFrontend(FE_OPT_SCANLINES, !show_scanlines);
 						}
-						break;
-					case SHORTCUT_TAKE_SCREENSHOT: 
-						Take_screenshot();
 						break;
 					default: break;
 				}
