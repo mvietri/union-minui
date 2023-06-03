@@ -1,3 +1,11 @@
+#Avoid complex names
+#Separator is '~'. Do not include that in the alias
+#Lines starting with '#' are comments and are not count
+#Keep below 1000 including comments
+#
+#Works for any list (collections, favorites, consoles, etc)
+#Real filename will be shown on game's menu. This only affects main menu listing.
+#
 #NEOGEO~##
 2020bb~2020 Super Baseball
 sonicwi2~Aero Fighters 2

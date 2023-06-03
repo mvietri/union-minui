@@ -1304,29 +1304,30 @@ int main (int argc, char *argv[]) {
 
 	FILE *aliases = fopen(ALIASES_PATH, "r"); 
 	int aIndex = 0;
-    char* original[50];
-    char* alias[50];
+    char* original[1000];
+    char* alias[1000];
     char line[75];
 		
 	if (aliases) {
 	    while(fgets(line, sizeof line, aliases)!=NULL) {
-		    original[aIndex] = malloc(sizeof(line));
-		    alias[aIndex] = malloc(sizeof(line));
+	    	if (line[0] != '\0' && line[0] != '#') {
+			    original[aIndex] = malloc(sizeof(line));
+			    alias[aIndex] = malloc(sizeof(line));
 
-		    int set_alias = 0;
-		    char* split = strtok(line, ":");
-			
-   			while(split) {
-   				if (!set_alias) {
-		    		strcpy(original[aIndex], split);
-		    		set_alias = 1;
-   				} else {
-   					strcpy(alias[aIndex], split);
-   				}
-     			split = strtok(NULL, ":");
-   			}
-
-		    aIndex++;
+			    int set_alias = 0;
+			    char* split = strtok(line, "~");
+				
+	   			while(split) {
+	   				if (!set_alias) {
+			    		strcpy(original[aIndex], split);
+			    		set_alias = 1;
+	   				} else {
+	   					strcpy(alias[aIndex], split);
+	   				}
+	     			split = strtok(NULL, "~");
+	   			}
+			    aIndex++;
+	    	}
 		}
 
 	    fclose(aliases);
