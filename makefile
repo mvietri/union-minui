@@ -19,8 +19,9 @@ RELEASE_BASE=FinUI-$(RELEASE_TIME)b
 RELEASE_DOT!=find ./releases/. -regex ".*/$(RELEASE_BASE)-[0-9]+-base\.zip" -printf '.' | wc -m
 RELEASE_NAME=$(RELEASE_BASE)-$(RELEASE_DOT)
 
-ifeq (,$(BUILD_HASH))
-BUILD_HASH="devRelease"
+#in case BUILD_HASH is empty, put something to avoid crashing
+ifeq (,$(BUILD_HASH)) 
+BUILD_HASH="unknown release"
 endif
 
 # TODO: this needs to consider the different platforms, eg. rootfs.ext2 should only be copied in rg35xx-toolchain
