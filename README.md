@@ -37,9 +37,11 @@ on top of MinUI.
 
 - Add to Favorites
 - Clear "Recently Played"
-- Battery efficiency improvements
+- Power saving improvements
 - Performance improvements
+- Multi-core CPU support
 - Battery reading adjustments
+- Additional emulators (MAME)
 - Base and Extras are merged into one Full release
 - Native macOS installation instructions
 - Developer experience improvements
@@ -52,14 +54,15 @@ on top of MinUI.
 
 ### Build project
 
-Run `./start-toolchain.sh` and then `make all` in the Docker container shell.
+Run `./start-toolchain.sh` and then run `make all` in the Docker container shell.
 
-### TODO
+### Debug project
 
-- Improve battery capacity reading accuracy
-- Show battery percentage number overlay
-- Change boot logo
-- [...things in the old todo?...](./todo.txt)
+Create a file with the name `enableADB` on the `misc` disk to enable ADB.
+
+### Install release
+
+Update `DISK_PATH` and then run `./install-release.sh`.
 
 ## Disclaimer
 

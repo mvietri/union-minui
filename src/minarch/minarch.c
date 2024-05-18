@@ -47,7 +47,6 @@ enum {
 // default frontend options
 static int screen_scaling = SCALE_ASPECT; // aspect
 static int show_scanlines = 0;
-static int optimize_text = 0;
 static int prevent_tearing = 1; // lenient
 static int show_debug = 0;
 static int max_ff_speed = 3; // 4x
@@ -435,6 +434,55 @@ static void SRAM_write(void) {
 
 ///////////////////////////////////////
 
+static void RTC_getPath(char* filename) {
+	sprintf(filename, "%s/%s.rtc", core.saves_dir, game.name);
+}
+static void RTC_read(void) {
+	size_t rtc_size = core.get_memory_size(RETRO_MEMORY_RTC);
+	if (!rtc_size) return;
+
+	char filename[MAX_PATH];
+	RTC_getPath(filename);
+	printf("rtc path (read): %s\n", filename);
+
+	FILE *rtc_file = fopen(filename, "r");
+	if (!rtc_file) return;
+
+	void* rtc = core.get_memory_data(RETRO_MEMORY_RTC);
+
+	if (!rtc || !fread(rtc, 1, rtc_size, rtc_file)) {
+		LOG_error("Error reading RTC data\n");
+	}
+
+	fclose(rtc_file);
+}
+static void RTC_write(void) {
+	size_t rtc_size = core.get_memory_size(RETRO_MEMORY_RTC);
+	if (!rtc_size) return;
+
+	char filename[MAX_PATH];
+	RTC_getPath(filename);
+	printf("rtc path (write) size(%u): %s\n", rtc_size, filename);
+
+	FILE *rtc_file = fopen(filename, "w");
+	if (!rtc_file) {
+		LOG_error("Error opening RTC file: %s\n", strerror(errno));
+		return;
+	}
+
+	void *rtc = core.get_memory_data(RETRO_MEMORY_RTC);
+
+	if (!rtc || rtc_size != fwrite(rtc, 1, rtc_size, rtc_file)) {
+		LOG_error("Error writing RTC data to file\n");
+	}
+
+	fclose(rtc_file);
+
+	sync();
+}
+
+///////////////////////////////////////
+
 static void Downsample(void* __restrict src, void* __restrict dst, uint32_t w, uint32_t h, uint32_t pitch, uint32_t dst_pitch) {
 	uint32_t ox = 0;
 	uint32_t oy = 0;
@@ -461,6 +509,9 @@ static void State_read(void) { // from picoarch
 	size_t state_size = core.serialize_size();
 	if (!state_size) return;
 
+	int was_ff = fast_forward;
+	fast_forward = 0;
+	
 	void *state = calloc(1, state_size);
 	if (!state) {
 		LOG_error("Couldn't allocate memory for state\n");
@@ -478,7 +529,9 @@ static void State_read(void) { // from picoarch
 		goto error;
 	}
 
-	if (state_size != fread(state, 1, state_size, state_file)) {
+	// some cores report the wrong serialize size initially for some games, eg. mgba: Wario Land 4
+	// so we allow a size mismatch as long as the actual size fits in the buffer we've allocated
+	if (state_size < fread(state, 1, state_size, state_file)) {
 		LOG_error("Error reading state data from file: %s (%s)\n", filename, strerror(errno));
 		goto error;
 	}
@@ -491,11 +544,16 @@ static void State_read(void) { // from picoarch
 error:
 	if (state) free(state);
 	if (state_file) fclose(state_file);
+	
+	fast_forward = was_ff;
 }
 static void State_write(void) { // from picoarch
 	size_t state_size = core.serialize_size();
 	if (!state_size) return;
-
+	
+	int was_ff = fast_forward;
+	fast_forward = 0;
+	
 	void *state = calloc(1, state_size);
 	if (!state) {
 		LOG_error("Couldn't allocate memory for state\n");
@@ -526,6 +584,8 @@ error:
 	if (state_file) fclose(state_file);
 
 	sync();
+	
+	fast_forward = was_ff;
 }
 static void State_autosave(void) {
 	int last_state_slot = state_slot;
@@ -610,7 +670,6 @@ static char* max_ff_labels[] = {
 enum {
 	FE_OPT_SCALING,
 	FE_OPT_SCANLINES,
-	FE_OPT_TEXT,
 	FE_OPT_TEARING,
 	FE_OPT_OVERCLOCK,
 	FE_OPT_DEBUG,
@@ -797,16 +856,6 @@ static struct Config {
 				.values = onoff_labels,
 				.labels = onoff_labels,
 			},
-			[FE_OPT_TEXT] = {
-				.key	= "minarch_optimize_text", 
-				.name	= "Optimize Text",
-				.desc	= "Prioritize a consistent stroke width when upscaling single\npixel lines using nearest neighbor scaler. Increases CPU load.\nOnly applies to native scaling.",
-				.default_value = 0,
-				.value = 0,
-				.count = 2,
-				.values = onoff_labels,
-				.labels = onoff_labels,
-			},
 			[FE_OPT_TEARING] = {
 				.key	= "minarch_prevent_tearing",
 				.name	= "Prevent Tearing",
@@ -900,7 +949,6 @@ static void Config_syncFrontend(int i, int value) {
 	switch (i) {
 		case FE_OPT_SCALING:	screen_scaling 	= value; renderer.src_w = 0; break;
 		case FE_OPT_SCANLINES:	show_scanlines 	= value; renderer.src_w = 0; break;
-		case FE_OPT_TEXT:		optimize_text 	= value; renderer.src_w = 0; break;
 		case FE_OPT_TEARING:	prevent_tearing = value; break;
 		case FE_OPT_OVERCLOCK:	overclock		= value; break;
 		case FE_OPT_DEBUG:		show_debug 		= value; break;
@@ -2355,125 +2403,6 @@ static void scaleNN_scanline(void* __restrict src, void* __restrict dst, uint32_
 		row += 1;
 	}
 }
-static void scaleNN_text(void* __restrict src, void* __restrict dst, uint32_t w, uint32_t h, uint32_t pitch, uint32_t dst_pitch) {
-	int dy = -renderer.dst_h;
-	unsigned lines = h;
-	bool copy = false;
-
-	size_t cpy_w = renderer.dst_w * FIXED_BPP;
-	int screen_p = screen->pitch;
-		
-	int safe = w - 1; // don't look behind when there's nothing to see
-	uint16_t l1,l2;
-	while (lines) {
-		int dx = -renderer.dst_w;
-		const uint16_t *psrc16 = src;
-		uint16_t *pdst16 = dst;
-		l1 = l2 = 0x0;
-		
-		if (copy) {
-			copy = false;
-			memcpy(dst, dst - screen_p, cpy_w);
-			dst += screen_p;
-			dy += h;
-		} else if (dy < 0) {
-			int col = w;
-			while(col--) {
-				int d = 0;
-				if (col<safe && l1!=l2) {
-					// https://stackoverflow.com/a/71086522/145965
-					uint16_t r = (l1 >> 10) & 0x3E;
-					uint16_t g = (l1 >> 5) & 0x3F;
-					uint16_t b = (l1 << 1) & 0x3E;
-					uint16_t luma = (r * 218) + (g * 732) + (b * 74);
-					luma = (luma >> 10) + ((luma >> 9) & 1); // 0-63
-					d = luma > 24;
-				}
-
-				uint16_t s = *psrc16;
-				
-				while (dx < 0) {
-					*pdst16++ = d ? l1 : s;
-					dx += w;
-
-					l2 = l1;
-					l1 = s;
-					d = 0;
-				}
-
-				dx -= renderer.dst_w;
-				psrc16++;
-			}
-
-			dst += screen_p;
-			dy += h;
-		}
-
-		if (dy >= 0) {
-			dy -= renderer.dst_h;
-			src += pitch;
-			lines--;
-		} else {
-			copy = true;
-		}
-	}
-}
-static void scaleNN_text_scanline(void* __restrict src, void* __restrict dst, uint32_t w, uint32_t h, uint32_t pitch, uint32_t dst_pitch) {
-	int dy = -renderer.dst_h;
-	unsigned lines = h;
-
-	int row = 0;
-	int safe = w - 1; // don't look behind when there's nothing to see
-	uint16_t l1,l2;
-	while (lines) {
-		int dx = -renderer.dst_w;
-		const uint16_t *psrc16 = src;
-		uint16_t *pdst16 = dst;
-		l1 = l2 = 0x0;
-		
-		if (row%2==0) {
-			int col = w;
-			while(col--) {
-				int d = 0;
-				if (col<safe && l1!=l2) {
-					// https://stackoverflow.com/a/71086522/145965
-					uint16_t r = (l1 >> 10) & 0x3E;
-					uint16_t g = (l1 >> 5) & 0x3F;
-					uint16_t b = (l1 << 1) & 0x3E;
-					uint16_t luma = (r * 218) + (g * 732) + (b * 74);
-					luma = (luma >> 10) + ((luma >> 9) & 1); // 0-63
-					d = luma > 24;
-				}
-
-				uint16_t s = *psrc16;
-				
-				while (dx < 0) {
-					*pdst16 = *(pdst16 + dst_pitch) = d ? l1 : s;
-					pdst16 += 1;
-					
-					dx += w;
-
-					l2 = l1;
-					l1 = s;
-					d = 0;
-				}
-
-				dx -= renderer.dst_w;
-				psrc16 += 1;
-			}
-		}
-
-		dst += dst_pitch;
-		dy += h;
-				
-		if (dy >= 0) {
-			dy -= renderer.dst_h;
-			src += pitch;
-			lines--;
-		}
-		row += 1;
-	}
-}
 
 static SDL_Surface* scaler_surface;
 static void selectScaler_PAR(int width, int height, int pitch) {
@@ -2588,8 +2517,8 @@ static void selectScaler_PAR(int width, int height, int pitch) {
 	renderer.dst_offset = (oy * device_pitch) + (ox * FIXED_BPP);
 
 	if (use_nearest) 
-		if (show_scanlines) renderer.scaler = optimize_text ? scaleNN_text_scanline : scaleNN_scanline;
-		else renderer.scaler = optimize_text ? scaleNN_text : scaleNN;
+		if (show_scanlines) renderer.scaler = scaleNN_scanline;
+		else renderer.scaler = scaleNN;
 	else {
 		sprintf(scaler_name, "%iX", scale);
 		if (show_scanlines) {
@@ -2646,7 +2575,7 @@ static void selectScaler_AR(int width, int height, int pitch) {
 	
 	// if (scale>6) scale = 6;
 	// else
-	if (scale>2) scale = 4; // TODO: pillar/letterboxing at 3x produces vertical banding (some kind of alignment issue?)
+	if (scale>2) scale = 2; // TODO: pillar/letterboxing at 3x produces vertical banding (some kind of alignment issue?)
 
 	// reduce scale if we don't have enough memory to accomodate it
 	// scaled width and height can't be greater than our fixed page width or height
@@ -2942,11 +2871,13 @@ void Core_load(void) {
 	core.load_game(&game_info);
 	
 	SRAM_read();
+	RTC_read();
 	
 	// NOTE: must be called after core.load_game!
 	struct retro_system_av_info av_info = {};
-	core.get_system_av_info(&av_info);
-	
+	core.get_system_av_info(&av_info);	
+	// FIX: some cores need configure a default controller.
+	core.set_controller_port_device(0, 1);
 	core.fps = av_info.timing.fps;
 	core.sample_rate = av_info.timing.sample_rate;
 	double a = av_info.geometry.aspect_ratio;
@@ -2964,6 +2895,7 @@ void Core_unload(void) {
 void Core_quit(void) {
 	if (core.initialized) {
 		SRAM_write();
+		RTC_write();
 		core.unload_game();
 		core.deinit();
 		core.initialized = 0;
@@ -3057,6 +2989,7 @@ void Menu_quit(void) {
 }
 void Menu_beforeSleep(void) {
 	SRAM_write();
+	RTC_write();
 	State_autosave();
 	putFile(AUTO_RESUME_PATH, game.path + strlen(SDCARD_PATH));
 	POW_setCPUSpeed(CPU_SPEED_MENU);
@@ -3856,6 +3789,7 @@ static void Menu_loop(void) {
 	}
 	
 	SRAM_write();
+	RTC_write();
 	POW_warn(0);
 	POW_setCPUSpeed(CPU_SPEED_MENU); // set Hz directly
 	GFX_setVsync(VSYNC_STRICT);
@@ -3863,7 +3797,6 @@ static void Menu_loop(void) {
 	int rumble_strength = VIB_getStrength();
 	VIB_setStrength(0);
 	
-	fast_forward = 0;
 	POW_enableAutosleep();
 	PAD_reset();
 	
@@ -4312,19 +4245,23 @@ static void trackFPS(void) {
 }
 
 static void limitFF(void) {
+	static uint64_t ff_frame_time = 0;
 	static uint64_t last_time = 0;
-	const uint64_t now = getMicroseconds();
+	static int last_max_speed = -1;
 
+	if (last_max_speed!=max_ff_speed) {
+		last_max_speed = max_ff_speed;
+		ff_frame_time = 1000000 / (core.fps * (max_ff_speed + 1));
+	}
+
+	uint64_t now = getMicroseconds();
 	if (fast_forward && max_ff_speed) {
 		if (last_time == 0) last_time = now;
 		int elapsed = now - last_time;
 		if (elapsed>0 && elapsed<0x80000) {
-			uint64_t ff_frame_time = 1000000 / (core.fps * (max_ff_speed + 1)); // TODO: define this only when max_ff_speed changes
 			if (elapsed<ff_frame_time) {
 				int delay = (ff_frame_time - elapsed) / 1000;
-				if (delay>0) {
-					// TODO: huh, this isn't causing the Tekken 3 hangs...
-					// printf("limitFF delay: %i\n", delay); fflush(stdout);
+				if (delay>0 && delay<17) { // don't allow a delay any greater than a frame
 					SDL_Delay(delay);
 				}
 			}

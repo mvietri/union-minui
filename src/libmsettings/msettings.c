@@ -25,8 +25,8 @@ typedef struct Settings {
 } Settings;
 static Settings DefaultSettings = {
 	.version = SETTINGS_VERSION,
-	.brightness = 2,
-	.headphones = 4,
+	.brightness = 4,
+	.headphones = 8,
 	.speaker = 8,
 	.jack = 0,
 };
@@ -47,12 +47,12 @@ void InitSettings(void) {
 	
 	shm_fd = shm_open(SHM_KEY, O_RDWR | O_CREAT | O_EXCL, 0644); // see if it exists
 	if (shm_fd==-1 && errno==EEXIST) { // already exists
-		puts("Settings client");
+		// puts("Settings client");
 		shm_fd = shm_open(SHM_KEY, O_RDWR, 0644);
 		settings = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
 	}
 	else { // host
-		puts("Settings host"); // keymon
+		// puts("Settings host"); // keymon
 		is_host = 1;
 		// we created it so set initial size and populate
 		ftruncate(shm_fd, shm_size);
@@ -72,7 +72,7 @@ void InitSettings(void) {
 		// these shouldn't be persisted
 		// settings->jack = 0;
 	}
-	printf("brightness: %i\nspeaker: %i \n", settings->brightness, settings->speaker);
+	printf("brightness: %i\nspeaker: %i \nheadphones: %i \n", settings->brightness, settings->speaker, settings->headphones);
 	
 	SetVolume(GetVolume());
 	SetBrightness(GetBrightness());

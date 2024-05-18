@@ -14,7 +14,7 @@ endif
 
 BUILD_HASH!=git rev-parse --short HEAD
 
-RELEASE_TIME!=date +%Y%m%d
+RELEASE_TIME!=TZ=GMT date +%Y%m%d
 RELEASE_BASE=FinUI-$(RELEASE_TIME)b
 RELEASE_DOT!=find ./releases/. -regex ".*/$(RELEASE_BASE)-[0-9]+-base\.zip" -printf '.' | wc -m
 RELEASE_NAME=$(RELEASE_BASE)-$(RELEASE_DOT)
@@ -26,7 +26,7 @@ endif
 
 # TODO: this needs to consider the different platforms, eg. rootfs.ext2 should only be copied in rg35xx-toolchain
 
-all: lib sys all-cores tools bundle readmes zip report
+all: lib sys all-cores tools dtb bundle readmes zip report
 
 repack: bundle readmes zip report
 
@@ -49,6 +49,9 @@ tools:
 	cd ./src/toggle_adb && make
 	cd ./other/DinguxCommander && make -j
 
+dtb:
+	cd ./src/dts/ && make
+
 bundle:
 	# ready build
 	rm -rf ./build
@@ -68,6 +71,9 @@ bundle:
 
 	# populate system
 	cp ~/buildroot/output/images/rootfs.ext2 ./build/SYSTEM/rg35xx
+	cp ./src/dts/kernel.dtb ./build/SYSTEM/rg35xx/dat
+	cp ./src/ramdisk/patched-ramdisk.img ./build/SYSTEM/rg35xx/dat/ramdisk.img
+	cp ./src/ramdisk/charging.png ./build/SYSTEM/rg35xx/dat/
 	cp ./src/libmsettings/libmsettings.so ./build/SYSTEM/rg35xx/lib
 	cp ./src/keymon/keymon.elf ./build/SYSTEM/rg35xx/bin
 	cp ./src/minarch/minarch.elf ./build/SYSTEM/rg35xx/bin
@@ -86,12 +92,16 @@ bundle:
 	cp ./cores/output/snes9x2005_plus_libretro.so ./build/SYSTEM/rg35xx/cores
 
 	# extras
+	cp ./cores/output/mame2003_plus_libretro.so ./build/EXTRAS/Emus/rg35xx/MAME.pak
+	cp ./cores/output/fake08_libretro.so ./build/EXTRAS/Emus/rg35xx/P8.pak
 	cp ./cores/output/mgba_libretro.so ./build/EXTRAS/Emus/rg35xx/MGBA.pak
 	cp ./cores/output/mgba_libretro.so ./build/EXTRAS/Emus/rg35xx/SGB.pak
 	cp ./cores/output/mednafen_pce_fast_libretro.so ./build/EXTRAS/Emus/rg35xx/PCE.pak
 	cp ./cores/output/mednafen_supafaust_libretro.so ./build/EXTRAS/Emus/rg35xx/SUPA.pak
 	cp ./cores/output/mednafen_vb_libretro.so ./build/EXTRAS/Emus/rg35xx/VB.pak
 	cp ./cores/output/pokemini_libretro.so ./build/EXTRAS/Emus/rg35xx/PKM.pak
+	cp ./cores/output/race_libretro.so ./build/EXTRAS/Emus/rg35xx/NGP.pak
+	cp ./cores/output/race_libretro.so ./build/EXTRAS/Emus/rg35xx/NGPC.pak
 	cp ./other/DinguxCommander/output/DinguxCommander ./build/EXTRAS/Tools/rg35xx/Files.pak
 	cp -R ./other/DinguxCommander/res ./build/EXTRAS/Tools/rg35xx/Files.pak/
 

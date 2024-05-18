@@ -13,7 +13,9 @@ if [ ! -f $FLAG_PATH ]; then
 	echo "backing up"
 	BAK_PATH=$TF1_PATH/bak
 	mkdir -p $BAK_PATH
-	cp /misc/boot_logo.bmp.gz $BAK_PATH
+	cp /misc/boot_logo.bmp.gz $BAK_PATH	
+	cp /misc/kernel.dtb $BAK_PATH 
+	cp /misc/ramdisk.img $BAK_PATH
 fi
 
 was_updated() {
@@ -24,6 +26,11 @@ was_updated() {
 		
 		if [[ "$A_NAME" == "boot_logo.bmp.gz" ]]; then
 			# we don't care if the user has changed their boot logo
+			continue
+		fi
+		
+		if [[ "$A_NAME" == "charging.png" ]]; then
+			# we don't care if the user has changed their charging image
 			continue
 		fi
 		
@@ -46,9 +53,13 @@ if [ ! -f $FLAG_PATH ] || was_updated; then
 	echo "updating misc partition"
 	mount -o remount,rw /dev/block/actb /misc
 	cp $SYSTEM_PATH/dat/dmenu.bin /misc
+	cp $SYSTEM_PATH/dat/kernel.dtb /misc
+	cp $SYSTEM_PATH/dat/ramdisk.img /misc
+
+	# graphics are only installed, never updated
 	if [ ! -f $FLAG_PATH ]; then
-		# only replace boot logo on install not update!
 		cp $SYSTEM_PATH/dat/boot_logo.bmp.gz /misc
+		cp $SYSTEM_PATH/dat/charging.png /misc
 	fi
 	touch $FLAG_PATH
 	sync && reboot

@@ -90,6 +90,7 @@ static void ion_alloc(int fd_ion, ion_alloc_info_t* info) {
 static void ion_free(int fd_ion, ion_alloc_info_t* info) {
 	struct ion_handle_data	ihd;
 	munmap(info->vadd, info->size);
+	close(info->fd);
 	ihd.handle = (uintptr_t)info->handle;
 	if (ioctl(fd_ion, ION_IOC_FREE, &ihd)<0) fprintf(stderr, "ION_FREE failed %s\n",strerror(errno));
 	fflush(stdout);
@@ -441,7 +442,12 @@ SDL_Surface* GFX_init(int mode) {
 	font.medium = TTF_OpenFont(FONT_PATH, SCALE1(FONT_MEDIUM));
 	font.small 	= TTF_OpenFont(FONT_PATH, SCALE1(FONT_SMALL));
 	font.tiny 	= TTF_OpenFont(FONT_PATH, SCALE1(FONT_TINY));
-	
+
+	TTF_SetFontStyle(font.large, TTF_STYLE_BOLD);
+	TTF_SetFontStyle(font.medium, TTF_STYLE_BOLD);
+	TTF_SetFontStyle(font.small, TTF_STYLE_BOLD);
+	TTF_SetFontStyle(font.tiny, TTF_STYLE_BOLD);
+
 	return gfx.screen;
 }
 
@@ -688,7 +694,7 @@ void GFX_blitRect(int asset, SDL_Surface* dst, SDL_Rect* dst_rect) {
 	SDL_FillRect(dst, &(SDL_Rect){x+r,y+h-r,w-d,r}, c);
 	GFX_blitAsset(asset, &(SDL_Rect){r,r,r,r}, dst, &(SDL_Rect){x+w-r,y+h-r});
 }
-void GFX_blitClockAndBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
+void GFX_blitBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
 	// LOG_info("dst: %p\n", dst);
 	
 	if (!dst_rect) dst_rect = &(SDL_Rect){0,0,0,0};
@@ -717,19 +723,6 @@ void GFX_blitClockAndBattery(SDL_Surface* dst, SDL_Rect* dst_rect) {
 		
 		GFX_blitAsset(percent<=20?ASSET_BATTERY_FILL_LOW:ASSET_BATTERY_FILL, &clip, dst, &(SDL_Rect){x+SCALE1(3)+clip.x,y+SCALE1(2)});
 	}
-
-	// Get the current time
-	time_t currentTime = time(NULL);
-	struct tm* timeinfo = localtime(&currentTime);
-	int hours = timeinfo->tm_hour;
-	int minutes = timeinfo->tm_min;
-
-	// Convert hours and minutes to strings
-	char timeStr[6];
-	snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hours, minutes);
-	SDL_Surface* text = TTF_RenderUTF8_Blended(font.large, timeStr, COLOR_WHITE);
-	SDL_BlitSurface(text, NULL, dst, &(SDL_Rect){dst_rect->x - text->w - 20, dst_rect->y + (SCALE1(PILL_SIZE) - text->h) / 2});
-	SDL_FreeSurface(text);
 }
 int GFX_getButtonWidth(char* hint, char* button) {
 	int button_width = 0;
@@ -896,7 +889,7 @@ int GFX_blitHardwareGroup(SDL_Surface* dst, int show_setting) {
 			ow,
 			SCALE1(PILL_SIZE)
 		});
-		GFX_blitClockAndBattery(dst, &(SDL_Rect){ox,oy});
+		GFX_blitBattery(dst, &(SDL_Rect){ox,oy});
 	}
 	
 	return ow;
@@ -1355,7 +1348,7 @@ static void POW_initOverlay(void) {
 	SDL_SetAlpha(gfx.assets, 0,0);
 	GFX_blitAsset(ASSET_BLACK_PILL, NULL, pow.overlay, NULL);
 	SDL_SetAlpha(gfx.assets, SDL_SRCALPHA,0);
-	GFX_blitClockAndBattery(pow.overlay, NULL);
+	GFX_blitBattery(pow.overlay, NULL);
 
 	// setup overlay
 	memset(&pow.oargs, 0, sizeof(struct owlfb_overlay_args));
@@ -1401,26 +1394,12 @@ static void POW_quitOverlay(void) {
 	ioctl(gfx.fd_fb, OWLFB_OVERLAY_DISABLE, &pow.oargs);
 }
 
-static int POW_readBatteryStatus(void) {
-	#define BATTERY_2100MAH 1
-	#define BATTERY_2600MAH 2
-	#define BATTERY_3500MAH 3
-	#define UNKNOWN 9
+int POW_readBatteryStatus(void) {
+	#define READ_VOLTAGE 1
 
-	int battery = BATTERY_2600MAH; // Default
-	int battery_txt = getInt(BATTERY_PATH);
-	if (battery_txt > 0) {
-		battery = battery_txt;
-	}
-
-	int voltage_now = getInt("/sys/class/power_supply/battery/voltage_now");
-
-	if (battery == BATTERY_2100MAH) {
+	if (READ_VOLTAGE > 0) {
+		int voltage_now = getInt("/sys/class/power_supply/battery/voltage_now");
 		return ((voltage_now / 10000) - 310); // 310-410
-	} else if (battery == BATTERY_2600MAH) {
-		return ((voltage_now / 10000) - 308); // 308-414? Seems incorrect...
-	} else if (battery == BATTERY_3500MAH) {
-		// ???-???
 	}
 
 	// Fallback
@@ -1560,22 +1539,20 @@ void POW_update(int* _dirty, int* _show_setting, POW_callback_t before_sleep, PO
 void POW_disablePowerOff(void) {
 	pow.can_poweroff = 0;
 }
-void POW_sync(char* msg) {
-	GFX_clear(gfx.screen);
-	GFX_blitMessage(font.large, msg, gfx.screen, NULL);
-	GFX_flip(gfx.screen);
-
-	system("sync");
-	system("echo s > /proc/sysrq-trigger");
-	system("echo u > /proc/sysrq-trigger");
-	system("sync");
-	
-	sleep(2);
-}
 void POW_powerOff(void) {
 	if (pow.can_poweroff) {
+		GFX_resize(FIXED_WIDTH,FIXED_HEIGHT,FIXED_PITCH);
+
 		char* msg = exists(AUTO_RESUME_PATH) ? "Quicksave created,\npowering off" : "Powering off";
-		POW_sync(msg);
+		GFX_blitMessage(font.large, msg, gfx.screen, NULL);
+		GFX_flip(gfx.screen);
+
+		system("sync");
+		system("echo s > /proc/sysrq-trigger");
+		system("echo u > /proc/sysrq-trigger");
+		system("sync");
+
+		sleep(2);
 		
 		// actual shutdown
 		system("echo o > /proc/sysrq-trigger");
@@ -1583,12 +1560,11 @@ void POW_powerOff(void) {
 }
 void POW_reboot(void) { 
 	char* msg = "Rebooting";	
-	POW_sync(msg);
 	
-	// trigger reboot
+	system("sync");
 	system("echo b > /proc/sysrq-trigger"); 
+	system("sync");
 }
-
 #define BACKLIGHT_PATH "/sys/class/backlight/backlight.2/bl_power"
 
 void POW_setCPUSpeed(int speed) {
