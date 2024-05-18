@@ -27,12 +27,12 @@ fceumm_REPO = https://github.com/libretro/libretro-fceumm
 
 gambatte_REPO = https://github.com/libretro/gambatte-libretro
 
-gpsp_HASH = 1d1c719 # last known working save states
+gpsp_HASH = 8745bf3 # last known working save states
 
 mednafen_supafaust_REPO = https://github.com/libretro/supafaust
 
 pcsx_rearmed_MAKEFILE = Makefile.libretro
-pcsx_rearmed_HASH = 672e715 # e2fb138 # last known working build
+pcsx_rearmed_HASH = 672e715 # last known working build
 
 picodrive_REPO = https://github.com/irixxxx/picodrive
 picodrive_MAKEFILE = Makefile.libretro
