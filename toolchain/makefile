@@ -16,7 +16,7 @@ NORM=$(shell tput sgr0)
 ifeq ($(CONTAINER_NAME),)
 shell: .build
 	$(info $(BOLD)Starting $(TOOLCHAIN_NAME)...$(NORM))
-	docker run -it --rm -v "$(WORKSPACE_DIR)":/root/workspace $(TOOLCHAIN_NAME) /bin/bash -c "git config --global --add safe.directory /root/workspace && exec bash"
+	docker run -it --rm -v "$(WORKSPACE_DIR)":/root/workspace $(TOOLCHAIN_NAME) /bin/bash -c "git config --global --add safe.directory '*' && exec bash"
 else
 shell:
 	$(info $(BOLD)Connecting to running $(TOOLCHAIN_NAME)...$(NORM))
